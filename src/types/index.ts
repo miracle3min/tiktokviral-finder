@@ -20,6 +20,8 @@ export interface TikTokVideo {
     dynamicCover: string;
     duration: number;
     ratio: string;
+    playAddr: string;
+    downloadAddr: string;
   };
   music?: {
     title: string;

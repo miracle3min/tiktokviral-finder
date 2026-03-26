@@ -20,8 +20,11 @@ export interface TikTokVideo {
   };
   video: {
     cover: string;
+    dynamicCover: string;
     duration: number;
     ratio: string;
+    playAddr: string;
+    downloadAddr: string;
   };
   music?: {
     title: string;
@@ -64,9 +67,12 @@ interface RawVideo {
   collect_count?: number;
   video?: {
     cover?: string;
+    dynamicCover?: string;
     duration?: number;
     ratio?: string;
     originCover?: string;
+    playAddr?: string;
+    downloadAddr?: string;
   };
   cover?: string;
   duration?: number;
@@ -122,8 +128,11 @@ function normalizeVideo(raw: RawVideo): TikTokVideo {
     },
     video: {
       cover: raw.video?.cover || raw.video?.originCover || raw.cover || '',
+      dynamicCover: raw.video?.dynamicCover || '',
       duration: raw.video?.duration || raw.duration || 0,
       ratio: raw.video?.ratio || '',
+      playAddr: raw.video?.playAddr || '',
+      downloadAddr: raw.video?.downloadAddr || raw.video?.playAddr || '',
     },
     music: raw.music ? {
       title: raw.music.title || '',
