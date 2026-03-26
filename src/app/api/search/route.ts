@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { searchTikTokVideos } from '@/lib/tiktok-api';
+import { searchTikTok } from '@/lib/tiktok-api';
 import { logger } from '@/lib/logger';
 
 export const runtime = 'nodejs';
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   try {
     logger.info('Search request', { keyword });
 
-    const videos = await searchTikTokVideos(keyword.trim());
+    const videos = await searchTikTok(keyword.trim());
 
     const duration = Date.now() - startTime;
     logger.api('GET', '/api/search', 200, duration);
