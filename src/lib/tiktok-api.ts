@@ -166,30 +166,25 @@ export async function searchTikTok(keyword: string, count: number = 20): Promise
     if (Array.isArray(data)) {
       videos = data;
     } else if (data?.data && Array.isArray(data.data)) {
-      videos = data.data;
+      // API23 format: data[].item contains the actual video
+      const hasNestedItems = data.data.length > 0 && data.data[0]?.item;
+      if (hasNestedItems) {
+        videos = data.data
+          .filter((entry: { type?: number; item?: RawVideo }) => entry.type === 1 && entry.item)
+          .map((entry: { item: RawVideo }) => entry.item);
+        logger.info('TikTok API: Extracted nested items', { total: data.data.length, videos: videos.length });
+      } else {
+        videos = data.data;
+      }
     } else if (data?.item_list && Array.isArray(data.item_list)) {
       videos = data.item_list;
     } else if (data?.items && Array.isArray(data.items)) {
       videos = data.items;
-    } else if (data?.result && Array.isArray(data.result)) {
-      videos = data.result;
-    } else if (data?.data?.videos && Array.isArray(data.data.videos)) {
-      videos = data.data.videos;
     } else {
       logger.warn('TikTok API: Unexpected response structure', { 
         keys: data ? Object.keys(data) : 'null',
         type: typeof data 
       });
-      // Try to find any array in the response
-      if (data && typeof data === 'object') {
-        for (const key of Object.keys(data)) {
-          if (Array.isArray(data[key]) && data[key].length > 0) {
-            videos = data[key];
-            logger.info('TikTok API: Found videos in key', { key, count: videos.length });
-            break;
-          }
-        }
-      }
     }
 
     logger.info('TikTok API: Found videos', { count: videos.length });
